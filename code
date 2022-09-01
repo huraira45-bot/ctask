@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct _listNode{
+    float item;
+    struct _listNode* next;
+};
+typedef struct _listNode ListNode;
+
+void printList(ListNode *head);
+void deleteList(ListNode **ptrHead);
+
+ListNode *reverseSegment(ListNode* head, int start, int end);
+
+int main()
+{
+    ListNode *head = NULL, *temp;
+	float f = 0.0;
+	int S, E;
+
+	scanf("%d %d",&S, &E);
+
+	while (scanf("%f", &f)){
+		if (head == NULL){
+			head = (ListNode*) malloc(sizeof(ListNode));
+			temp = head;
+		}
+		else{
+			temp->next = (ListNode*) malloc(sizeof(ListNode));
+			temp = temp->next;
+		}
+		temp->item = f;
+	}
+	temp->next = NULL;
+	S++;
+	E++;
+	head = reverseSegment(head,S,E);
+	printList(head);
+	deleteList(&head);
+	return 0;
+
+}
+
+void printList(ListNode *head){
+    while(head !=NULL){
+        printf("%.2f ",head->item);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void deleteList(ListNode **ptrHead){
+    ListNode *cur = *ptrHead;
+    ListNode *temp;
+    while (cur!= NULL) {
+		temp=cur->next;
+		free(cur);
+		cur=temp;
+	}
+	*ptrHead=NULL;
+}
+ListNode* reverse(ListNode* head)
+{
+    ListNode* prev = NULL;
+    ListNode* curr = head;
+    while (curr) {
+        ListNode* next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+    return prev;
+}
+ListNode *reverseSegment(ListNode* head, int start, int end)
+{
+  if (start == end)
+        return head;
+
+    ListNode *revs = NULL, *revs_prev = NULL;
+    ListNode *revend = NULL, *revend_next = NULL;
+  
+    // Find values of above pointers.
+    int i = 1;
+    ListNode* curr = head;
+    while (curr && i <= end) {
+        if (i < start)
+            revs_prev = curr;
+        if (i == start)
+            revs = curr;
+        if (i == end) {
+            revend = curr;
+            revend_next = curr->next;
+        }
+        curr = curr->next;
+        i++;
+    }
+    revend->next = NULL;
+    // Reverse linked list starting with revs.
+    revend = reverse(revs);
+    // If starting position was not head
+    if (revs_prev)
+        revs_prev->next = revend;
+    // If starting position was head
+    else
+        head = revend;
+    revs->next = revend_next;
+    return head;
+}
+  
+void print(ListNode* head)
+{
+    while (head != NULL) {
+        printf("%d ", head->item);
+        head = head->next;
+    }
+    printf("\n");
+}
